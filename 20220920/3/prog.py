@@ -13,8 +13,11 @@ a = N
 
 while a <= N + 2:
     b = N
+    outp = ''
     while b <= N + 2:
-        print(a, '*', b, '=', num_detect(a * b), sep = ' ', end = ' ')
+        outp += '{} * {} = {}'.format(a, b, num_detect(a * b))
+        if b != N + 2:
+            outp += ' '
         b += 1
-    print()
+    print(outp)
     a += 1
