@@ -1,0 +1,5 @@
+:plusten x x+10
+:sum x y z t x+y+z+t
+plusten 10
+sum 1 2 3 4
+quit "{}{}"
