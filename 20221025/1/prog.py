@@ -5,3 +5,6 @@ def fib(m, n):
     for i in range(m - 1, n):
         yield b
         a, b = b, a + b
+
+import sys
+exec(sys.stdin.read())
