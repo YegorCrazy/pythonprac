@@ -1,0 +1,9 @@
+import random
+random.seed(42)
+
+def inf_rand():
+    while True:
+        yield random.randint(0, 10)
+
+it = slide(inf_rand(), 10)
+print(*[next(it) for i in range(100)])
