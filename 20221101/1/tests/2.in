@@ -1,0 +1,6 @@
+a = Omnibus()
+b = Omnibus()
+a.a = 42
+print(b.a)
+b.a = "aaa"
+print(a.a)

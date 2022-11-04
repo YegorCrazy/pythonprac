@@ -1,0 +1,4 @@
+a = Omnibus()
+a.test1 = "aaa"
+a.test2 = 42
+a.test3 = hex
