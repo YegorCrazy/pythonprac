@@ -14,6 +14,9 @@ class Grange:
             return Grange(index.start, self.q if index.step == None else self.q ** index.step, index.stop)
         return self.b0 * (self.q ** index)
     def __str__(self):
-        return f'grande({self.b0}, {self.q}, {self.bn})'
+        return f'grange({self.b0}, {self.q}, {self.bn})'
     def __repr__(self):
-        return f'grande({self.b0}, {self.q}, {self.bn})'
+        return f'grange({self.b0}, {self.q}, {self.bn})'
+
+import sys
+exec(sys.stdin.read())

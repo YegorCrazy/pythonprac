@@ -1,0 +1,9 @@
+a = Grange(2, 2, 20)
+print(a)
+print(len(a))
+if not a:
+    print("Empty")
+print(*[a[i] for i in range(6)], sep=' ')
+print(*list(a), sep=' ')
+print(*list(a[2:10]), sep=' ')
+print(*list(a[2:20:2]), sep=' ')

@@ -1,0 +1,9 @@
+a = Triangle((0, 0), (1, 4), (4, 0))
+b = Triangle((1, 2), (1, 1), (2, 1))
+if a:
+	print(round(abs(a), 3))
+if b:
+	print(round(abs(b), 3))
+print(a < b)
+print(a in b, b in a, sep = ', ')
+print(a & b)
