@@ -1,0 +1,3 @@
+a = DivStr('aaaa')
+print(list(a // 3))
+print(a % 3)

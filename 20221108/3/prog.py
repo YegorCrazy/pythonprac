@@ -19,7 +19,8 @@ def necro(a):
         raise Ghoul
 
 if __name__ == '__main__':
-    for i in range(10):
+    a, b = eval(input())
+    for i in range(a, b):
         try:
             necro(i)
         except Skeleton:

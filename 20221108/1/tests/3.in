@@ -1,0 +1,2 @@
+a = DivStr()
+print(list(a // 4))
