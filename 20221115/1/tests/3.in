@@ -1,0 +1,16 @@
+@objcount
+class A:
+  cls_counter = 0
+  def __init__(self):
+    self.__class__.cls_counter += 1
+  def __del__(self):
+    self.__class__.cls_counter -= 1
+
+a, b = A(), A()
+print(A.counter)
+print(A.cls_counter)
+del a
+del b
+print(A.counter)
+print(A.cls_counter)
+

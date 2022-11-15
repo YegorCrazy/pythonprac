@@ -14,11 +14,5 @@ def objcount(cls):
     cls.__del__ = new_del
     return cls
 
-@objcount
-class C:
-    pass
-
-c, d, e = C(), C(), C()
-print(C.counter)
-c = 100500
-print(C.counter)
+import sys
+exec(sys.stdin.read())
