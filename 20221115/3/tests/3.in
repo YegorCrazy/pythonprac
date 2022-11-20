@@ -1,0 +1,22 @@
+import random
+import datetime
+
+random.seed(42)
+
+input = {chr(x): random.randrange(10) for x in range(ord('a'), ord('z') + 1)}
+
+start = datetime.datetime.now()
+a = Alpha(**input)
+for x in range(ord('a'), ord('z') + 1):
+	tmp = getattr(a, chr(x))
+finish = datetime.datetime.now()
+res1 = finish - start
+
+start = datetime.datetime.now()
+a = AlphaQ(**input)
+for x in range(ord('a'), ord('z') + 1):
+        tmp = getattr(a, chr(x))
+finish = datetime.datetime.now()
+res2 = finish - start
+
+assert res1 <= res2
