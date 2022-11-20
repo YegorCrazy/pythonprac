@@ -1,0 +1,9 @@
+class C:
+	num = Num()
+
+c = C()
+print(c.num)
+c.num = "aaaaa"
+print(c.num)
+c.num = 1.111
+print(c.num)

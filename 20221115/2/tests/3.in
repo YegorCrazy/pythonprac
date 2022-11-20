@@ -1,0 +1,6 @@
+class D:
+	val = Num()
+
+print(D.val)
+D.val = [1, 2, 3, 4, 5]
+print(D.val)
