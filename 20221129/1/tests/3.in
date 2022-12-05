@@ -1,0 +1,7 @@
+class C(metaclass=dump):
+	def perf(self, a=5, b=6, d=8):
+		return a * b * d
+
+c = C()
+print(c.perf(6, d=10))
+print(c.perf(6))

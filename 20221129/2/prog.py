@@ -21,20 +21,5 @@ class check(type):
         setattr(cls, 'check_annotations', new_fun)
         return super().__init__(name, parents, ns)
 
-##class C(metaclass=check):
-##    A: list[int]
-##    B: str = "QQ"
-##
-##c = C()
-##print(c.check_annotations())
-##c.A = "ZZ"
-##print(c.check_annotations())
-##c.A = [100500, 42, 0]
-##print(c.check_annotations())
-##c.B = type("Boo",(str,),{})(42)
-##print(c.check_annotations())
-##c.A = ["FALSE"]
-##print(c.check_annotations())
-
 import sys
 exec(sys.stdin.read())

@@ -1,0 +1,11 @@
+class C(metaclass=check):
+    A: list[int]
+    B: str
+
+c = C()
+print(c.check_annotations())
+c.A = []
+c.B = 1
+print(c.check_annotations())
+c.B = "aaa"
+print(c.check_annotations())

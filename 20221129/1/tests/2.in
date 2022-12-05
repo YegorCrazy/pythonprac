@@ -1,0 +1,17 @@
+class C(metaclass=dump):
+	def __init__(self, a, b):
+		self.a = a
+		self.b = b
+	def perf(self, op='+'):
+		if op == '+':
+			return self.a + self.b
+		elif op == '-':
+			return self.a - self.b
+		else:
+			 return None
+
+c = C(2, 3)
+print(c.perf())
+print(c.perf(op='+'))
+print(c.perf(op='-'))
+print(c.perf(op='*'))

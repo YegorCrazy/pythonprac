@@ -1,0 +1,11 @@
+class C(metaclass=check):
+	A: int
+	B: str
+	def __init__(self, A, B):
+		self.A = A
+		self.B = B
+
+c = C(1, "aaa")
+print(c.check_annotations())
+c = C("aaa", 1)
+print(c.check_annotations())
