@@ -11,7 +11,7 @@ for folder_num in range(len(folders)):
     for task_num in range(tasks[folder_num]):
         with open('URLS', 'w') as file:
             for url in links:
-                file.write(url + folders[folder_num] + str(task_num + 1) + '\n')
+                file.write(url + folders[folder_num] + '/' + str(task_num + 1) + '/tests\n')
         subprocess.run(['mv', 'URLS', './' + folders[folder_num] + '/' + str(task_num + 1)])
 
 
