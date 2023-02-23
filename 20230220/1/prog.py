@@ -25,7 +25,7 @@ class Monster:
 
 
     def SayGreetings(self):
-        print(cowsay.cowsay(self.greeting))
+        print(cowsay.cowsay(self.greeting, cow=self.name))
 
 
 class Dungeon:
