@@ -176,6 +176,7 @@ if __name__ == '__main__':
     dungeon_size = [10, 10]
     dungeon = Dungeon(dungeon_size)
     player = Player(dungeon)
+    print('<<< Welcome to Python-MUD 0.1 >>>')
     while True:
         command = input()
         match command.split(None, 1):
