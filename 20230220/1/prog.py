@@ -7,10 +7,17 @@ def InvertCoordinates(const_coord):
     return coord
 
 
+class UnknownMonsterException(Exception):
+    pass
+
+
 class Monster:
 
-    def __init__(self, greeting):
+    def __init__(self, name, greeting):
+        if name not in cowsay.list_cows():
+            raise UnknownMonsterException
         self.greeting = greeting
+        self.name = name
 
 
     def ImpactOnPlayer(self, player):
@@ -18,7 +25,7 @@ class Monster:
 
 
     def SayGreetings(self):
-        print(cowsay.cowsay(self.greeting))
+        print(cowsay.cowsay(self.greeting, cow=self.name))
 
 
 class Dungeon:
@@ -30,7 +37,7 @@ class Dungeon:
                         for j in range(size[1])]
 
     
-    def AddMonster(self, coord, greeting):
+    def AddMonster(self, coord, name, greeting):
         # сюда приходят координаты в формате (гор, вер),
         # чтобы попасть в поле, которое задумывалось, нужно
         # инвертировать координаты
@@ -39,7 +46,7 @@ class Dungeon:
             replace_flag = True
         else:
             replace_flag = False
-        self.dungeon[array_coord[0]][array_coord[1]] = Monster(greeting)
+        self.dungeon[array_coord[0]][array_coord[1]] = Monster(name, greeting)
         print(f'Added monster to ({coord[0]}, {coord[1]}) '
               f'saying {greeting}')
         if replace_flag:
@@ -168,8 +175,12 @@ if __name__ == '__main__':
                 player.MoveDown()
             case ['addmon', options]:
                 try:
-                    str_x, str_y, message = options.split(None, 2)
-                    dungeon.AddMonster([int(str_x), int(str_y)], message)
+                    name, str_x, str_y, message = options.split(None, 3)
+                    dungeon.AddMonster([int(str_x), int(str_y)],
+                                       name,
+                                       message)
+                except UnknownMonsterException:
+                    print('Cannot add unknown monster')
                 except Exception:
                     print('Invalid arguments')
             case _:
