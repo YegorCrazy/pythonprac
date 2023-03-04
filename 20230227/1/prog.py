@@ -1,5 +1,7 @@
 import cowsay
 
+CUSTOM_MONSTERS = ['jgsbat']
+
 
 def InvertCoordinates(const_coord):
     coord = const_coord.copy()
@@ -14,7 +16,16 @@ class UnknownMonsterException(Exception):
 class Monster:
 
     def __init__(self, name, greeting):
-        if name not in cowsay.list_cows():
+        if name in CUSTOM_MONSTERS:
+            try:
+                with open(name + '.cow', 'r') as cowfile:
+                    self.cowfile = cowsay.read_dot_cow(cowfile)
+                    self.is_custom = True
+            except Exception:
+                raise UnknownMonsterException
+        elif name in cowsay.list_cows():
+            self.is_custom = False
+        else:
             raise UnknownMonsterException
         self.greeting = greeting
         self.name = name
@@ -25,7 +36,10 @@ class Monster:
 
 
     def SayGreetings(self):
-        print(cowsay.cowsay(self.greeting, cow=self.name))
+        if self.is_custom:
+            print(cowsay.cowsay(self.greeting, cowfile=self.cowfile))
+        else:
+            print(cowsay.cowsay(self.greeting, cow=self.name)) 
 
 
 class Dungeon:
