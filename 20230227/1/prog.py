@@ -1,4 +1,5 @@
 import cowsay
+import shlex
 
 CUSTOM_MONSTERS = ['jgsbat']
 
@@ -190,7 +191,7 @@ if __name__ == '__main__':
                 player.MoveDown()
             case ['addmon', options]:
                 try:
-                    name, str_x, str_y, message = options.split(None, 3)
+                    name, str_x, str_y, message = shlex.split(options)
                     dungeon.AddMonster([int(str_x), int(str_y)],
                                        name,
                                        message)
