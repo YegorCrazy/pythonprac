@@ -91,7 +91,7 @@ class Dungeon:
         # чтобы попасть в поле, которое задумывалось, нужно
         # инвертировать координаты
         array_coord = InvertCoordinates(coord)
-        if self.dungeon[array_coord[0]][array_coord[1]] != None:
+        if self.dungeon[array_coord[0]][array_coord[1]] is not None:
             replace_flag = True
         else:
             replace_flag = False
@@ -104,7 +104,7 @@ class Dungeon:
     def CheckMonster(self, player):
         # сюда приходят координаты из Player, так что тут
         # инвертировать ничего не нужно
-        if self.dungeon[player.position[0]][player.position[1]] != None:
+        if self.dungeon[player.position[0]][player.position[1]] is not None:
             monster = self.dungeon[player.position[0]][player.position[1]]
             monster.ImpactOnPlayer(player)
 
