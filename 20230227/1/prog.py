@@ -22,19 +22,19 @@ def InvertCoordinates(const_coord):
 
 class MonsterCreationParams:
 
-    # здесь хранятся параметры создания монстра в строковом виде
-
-    def __init__(self, name, greeting, coords):
+    def __init__(self, name, greeting, coords, hp):
         self.name = name
         self.greeting = greeting
         self.coords = list(map(int, coords))
+        self.hp = int(hp)
 
 
 def GetMonsterCreationParams(args):
     params = [args[0]]  # имя монстра всегда первое
     params_names_and_quantity = {
         'hello': 1,
-        'coords': 2
+        'coords': 2,
+        'hp': 1
         }
     for param_name in params_names_and_quantity.keys():
         if param_name not in args:
@@ -53,7 +53,7 @@ def GetMonsterCreationParams(args):
 
 class Monster:
 
-    def __init__(self, name, greeting):
+    def __init__(self, name, greeting, hp):
         if name in CUSTOM_MONSTERS:
             try:
                 with open(name + '.cow', 'r') as cowfile:
@@ -67,6 +67,7 @@ class Monster:
             raise UnknownMonsterException
         self.greeting = greeting
         self.name = name
+        self.hp = hp
 
     def ImpactOnPlayer(self, player):
         self.SayGreetings()
@@ -86,7 +87,7 @@ class Dungeon:
         self.dungeon = [[None for i in range(size[0])]
                         for j in range(size[1])]
 
-    def AddMonster(self, coord, name, greeting):
+    def AddMonster(self, coord, name, greeting, hp):
         # сюда приходят координаты в формате (гор, вер),
         # чтобы попасть в поле, которое задумывалось, нужно
         # инвертировать координаты
@@ -95,7 +96,9 @@ class Dungeon:
             replace_flag = True
         else:
             replace_flag = False
-        self.dungeon[array_coord[0]][array_coord[1]] = Monster(name, greeting)
+        self.dungeon[array_coord[0]][array_coord[1]] = Monster(name,
+                                                               greeting,
+                                                               hp)
         print(f'Added monster to ({coord[0]}, {coord[1]}) '
               f'saying {greeting}')
         if replace_flag:
@@ -220,7 +223,8 @@ if __name__ == '__main__':
                         )
                     dungeon.AddMonster(monster_options.coords,
                                        monster_options.name,
-                                       monster_options.greeting)
+                                       monster_options.greeting,
+                                       monster_options.hp)
                 except UnknownMonsterException:
                     print('Cannot add unknown monster')
                 except UndefinedParameterException as ex:
