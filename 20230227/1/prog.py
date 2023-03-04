@@ -4,14 +4,51 @@ import shlex
 CUSTOM_MONSTERS = ['jgsbat']
 
 
+class UnknownMonsterException(Exception):
+    pass
+
+
+class UndefinedParameterException(Exception):
+
+    def __init__(self, param_name):
+        self.param_name = param_name
+
+
 def InvertCoordinates(const_coord):
     coord = const_coord.copy()
     coord[0], coord[1] = coord[1], coord[0]
     return coord
 
 
-class UnknownMonsterException(Exception):
-    pass
+class MonsterCreationParams:
+
+    # здесь хранятся параметры создания монстра в строковом виде
+
+    def __init__(self, name, greeting, coords):
+        self.name = name
+        self.greeting = greeting
+        self.coords = list(map(int, coords))
+
+
+def GetMonsterCreationParams(args):
+    params = [args[0]]  # имя монстра всегда первое
+    params_names_and_quantity = {
+        'hello': 1,
+        'coords': 2
+        }
+    for param_name in params_names_and_quantity.keys():
+        if param_name not in args:
+            raise UndefinedParameterException(param_name)
+        index = args.index(param_name)
+        if params_names_and_quantity[param_name] == 1:
+            params.append(args[index + 1])
+        else:
+            param_value = []
+            for i in range(index + 1,
+                           index + 1 + params_names_and_quantity[param_name]):
+                param_value.append(args[i])
+            params.append(param_value)
+    return MonsterCreationParams(*params)
 
 
 class Monster:
@@ -31,10 +68,8 @@ class Monster:
         self.greeting = greeting
         self.name = name
 
-
     def ImpactOnPlayer(self, player):
         self.SayGreetings()
-
 
     def SayGreetings(self):
         if self.is_custom:
@@ -44,14 +79,13 @@ class Monster:
 
 
 class Dungeon:
-    
+
     def __init__(self, size):
         # size = [горизонтальный, вертикальный]
         self.dungeon_size = size
         self.dungeon = [[None for i in range(size[0])]
                         for j in range(size[1])]
 
-    
     def AddMonster(self, coord, name, greeting):
         # сюда приходят координаты в формате (гор, вер),
         # чтобы попасть в поле, которое задумывалось, нужно
@@ -67,14 +101,12 @@ class Dungeon:
         if replace_flag:
             print('Replaced the old monster')
 
-
     def CheckMonster(self, player):
         # сюда приходят координаты из Player, так что тут
         # инвертировать ничего не нужно
         if self.dungeon[player.position[0]][player.position[1]] != None:
             monster = self.dungeon[player.position[0]][player.position[1]]
             monster.ImpactOnPlayer(player)
-
 
     def MovePlayerLeft(self, player):
         # сюда приходят координаты из Player, то есть
@@ -90,7 +122,6 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
-
     def MovePlayerRight(self, player):
         # сюда приходят координаты из Player, то есть
         # как в массиве, инвертируем, чтобы первая
@@ -105,7 +136,6 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
-
     def MovePlayerUp(self, player):
         # сюда приходят координаты из Player, то есть
         # как в массиве, инвертируем, чтобы первая
@@ -119,7 +149,6 @@ class Dungeon:
         player_position = InvertCoordinates(player_position)
         player.ChangePosition(player_position)
         self.CheckMonster(player)
-
 
     def MovePlayerDown(self, player):
         # сюда приходят координаты из Player, то есть
@@ -144,11 +173,9 @@ class Player:
         # то есть (вер, гор)
         self.position = [0, 0]
 
-
     def ChangePosition(self, new_pos):
         self.position = new_pos
         self.PrintAfterMoveMessage()
-
 
     def PrintAfterMoveMessage(self):
         # чтобы вывести в человеческом формате, надо
@@ -156,18 +183,14 @@ class Player:
         output_pos = InvertCoordinates(self.position)
         print(f'Moved to ({output_pos[0]}, {output_pos[1]})')
 
-
     def MoveLeft(self):
         self.dungeon.MovePlayerLeft(self)
-
 
     def MoveRight(self):
         self.dungeon.MovePlayerRight(self)
 
-
     def MoveUp(self):
         self.dungeon.MovePlayerUp(self)
-
 
     def MoveDown(self):
         self.dungeon.MovePlayerDown(self)
@@ -191,12 +214,17 @@ if __name__ == '__main__':
                 player.MoveDown()
             case ['addmon', options]:
                 try:
-                    name, str_x, str_y, message = shlex.split(options)
-                    dungeon.AddMonster([int(str_x), int(str_y)],
-                                       name,
-                                       message)
+                    options_splitted = shlex.split(options)
+                    monster_options = GetMonsterCreationParams(
+                        options_splitted
+                        )
+                    dungeon.AddMonster(monster_options.coords,
+                                       monster_options.name,
+                                       monster_options.greeting)
                 except UnknownMonsterException:
                     print('Cannot add unknown monster')
+                except UndefinedParameterException as ex:
+                    print('Undefined parameter:', ex.param_name)
                 except Exception:
                     print('Invalid arguments')
             case _:
