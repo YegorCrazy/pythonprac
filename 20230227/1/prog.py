@@ -76,7 +76,7 @@ class Monster:
         if self.is_custom:
             print(cowsay.cowsay(self.greeting, cowfile=self.cowfile))
         else:
-            print(cowsay.cowsay(self.greeting, cow=self.name)) 
+            print(cowsay.cowsay(self.greeting, cow=self.name))
 
 
 class Dungeon:
