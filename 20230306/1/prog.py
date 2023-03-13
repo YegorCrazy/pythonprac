@@ -10,6 +10,8 @@ MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY = {
     'hp': 1
     }
 
+PLAYER_DAMAGE = 10
+
 
 class UnknownMonsterException(Exception):
     pass
@@ -87,6 +89,15 @@ class Monster:
             print(cowsay.cowsay(self.greeting, cowfile=self.cowfile))
         else:
             print(cowsay.cowsay(self.greeting, cow=self.name))
+
+    def GetAttacked(self, damage):
+        if self.hp > damage:
+            self.hp -= damage
+            return damage
+        else:
+            damage = self.hp
+            self.hp = 0
+            return damage
 
 
 class Dungeon:
@@ -177,6 +188,22 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
+    def PerformPlayerAttack(self, player):
+        # сюда приходят координаты из Player, то есть
+        # как в массиве
+        if self.dungeon[player.position[0]][player.position[1]] is None:
+            print("No monster here")
+        else:
+            monster = self.dungeon[player.position[0]][player.position[1]]
+            damage = monster.GetAttacked(PLAYER_DAMAGE)
+            print(f'Attacked {monster.name}, damage {damage} hp')
+            if monster.hp == 0:
+                print(f'{monster.name} died')
+                del monster
+                self.dungeon[player.position[0]][player.position[1]] = None
+            else:
+                print(f'{monster.name} now has {monster.hp} hp')
+
 
 class Player:
 
@@ -207,6 +234,9 @@ class Player:
 
     def MoveDown(self):
         self.dungeon.MovePlayerDown(self)
+
+    def Attack(self):
+        self.dungeon.PerformPlayerAttack(self)
 
 
 class MUDShell(cmd.Cmd):
@@ -248,6 +278,9 @@ class MUDShell(cmd.Cmd):
         command_args = MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY.keys()
         if not line[:startidx].split()[-1] in command_args:
             return [arg for arg in command_args if arg.startswith(text)]
+
+    def do_attack(self, args):
+        player.Attack()
 
 
 if __name__ == '__main__':
