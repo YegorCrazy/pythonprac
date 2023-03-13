@@ -10,7 +10,11 @@ MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY = {
     'hp': 1
     }
 
-PLAYER_DAMAGE = 10
+PLAYER_DAMAGE = {
+    'sword': 10,
+    'spear': 15,
+    'axe': 20
+    }
 
 
 class UnknownMonsterException(Exception):
@@ -188,14 +192,15 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
-    def PerformPlayerAttack(self, player):
+    def PerformPlayerAttack(self, player, weapon):
         # сюда приходят координаты из Player, то есть
         # как в массиве
         if self.dungeon[player.position[0]][player.position[1]] is None:
             print("No monster here")
         else:
+            damage = PLAYER_DAMAGE[weapon]
             monster = self.dungeon[player.position[0]][player.position[1]]
-            damage = monster.GetAttacked(PLAYER_DAMAGE)
+            damage = monster.GetAttacked(damage)
             print(f'Attacked {monster.name}, damage {damage} hp')
             if monster.hp == 0:
                 print(f'{monster.name} died')
@@ -235,8 +240,8 @@ class Player:
     def MoveDown(self):
         self.dungeon.MovePlayerDown(self)
 
-    def Attack(self):
-        self.dungeon.PerformPlayerAttack(self)
+    def Attack(self, weapon='sword'):
+        self.dungeon.PerformPlayerAttack(self, weapon)
 
 
 class MUDShell(cmd.Cmd):
@@ -280,7 +285,24 @@ class MUDShell(cmd.Cmd):
             return [arg for arg in command_args if arg.startswith(text)]
 
     def do_attack(self, args):
-        player.Attack()
+        args = args.split()
+        if 'with' in args:
+            weapon = args[args.index('with') + 1]
+            if weapon not in PLAYER_DAMAGE.keys():
+                print('Unknown weapon')
+                return
+            player.Attack(weapon)
+        else:
+            player.Attack()
+
+    def complete_attack(self, text, line, startidx, endidx):
+        if line[:startidx].split()[-1] == 'with':
+            return [weapon for weapon in PLAYER_DAMAGE.keys()
+                    if weapon.startswith(text)]
+        else:
+            if len(line.split()) == 1 or (len(line.split()) == 2
+                                          and 'with'.startswith(text)):
+                return ['with']
 
 
 if __name__ == '__main__':
