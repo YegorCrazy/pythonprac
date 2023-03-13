@@ -284,7 +284,8 @@ class MUDShell(cmd.Cmd):
 
     def complete_addmon(self, text, line, startidx, endidx):
         if line[:startidx].split()[-1] == 'addmon':
-            return GetAvailableMonsters()
+            return [monster for monster in GetAvailableMonsters()
+                    if monster.startswith(text)]
         command_args = MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY.keys()
         if not line[:startidx].split()[-1] in command_args:
             return [arg for arg in command_args if arg.startswith(text)]
@@ -315,7 +316,6 @@ class MUDShell(cmd.Cmd):
             if len(line.split()) == 2 or (len(line.split()) == 3
                                           and 'with'.startswith(text)):
                 return ['with']
-
 
 
 if __name__ == '__main__':
