@@ -10,7 +10,11 @@ MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY = {
     'hp': 1
     }
 
-PLAYER_DAMAGE = 10
+PLAYER_DAMAGE = {
+    'sword': 10,
+    'spear': 15,
+    'axe': 20
+    }
 
 
 class UnknownMonsterException(Exception):
@@ -188,7 +192,7 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
-    def PerformPlayerAttack(self, player, monster_name):
+    def PerformPlayerAttack(self, player, monster_name, weapon):
         # сюда приходят координаты из Player, то есть
         # как в массиве
         if (
@@ -199,8 +203,9 @@ class Dungeon:
                 ):
             print(f"No {monster_name} here")
         else:
+            damage = PLAYER_DAMAGE[weapon]
             monster = self.dungeon[player.position[0]][player.position[1]]
-            damage = monster.GetAttacked(PLAYER_DAMAGE)
+            damage = monster.GetAttacked(damage)
             print(f'Attacked {monster.name}, damage {damage} hp')
             if monster.hp == 0:
                 print(f'{monster.name} died')
@@ -240,8 +245,8 @@ class Player:
     def MoveDown(self):
         self.dungeon.MovePlayerDown(self)
 
-    def Attack(self, monster_name):
-        self.dungeon.PerformPlayerAttack(self, monster_name)
+    def Attack(self, monster_name, weapon='sword'):
+        self.dungeon.PerformPlayerAttack(self, monster_name, weapon)
 
 
 class MUDShell(cmd.Cmd):
@@ -290,15 +295,27 @@ class MUDShell(cmd.Cmd):
             print('Monster name not specified')
             return
         monster_name = args[0]
-        player.Attack(monster_name)
+        if 'with' in args:
+            weapon = args[args.index('with') + 1]
+            if weapon not in PLAYER_DAMAGE.keys():
+                print('Unknown weapon')
+                return
+            player.Attack(monster_name, weapon)
+        else:
+            player.Attack(monster_name)
 
     def complete_attack(self, text, line, startidx, endidx):
         if line[:startidx].split()[-1] == 'attack':
             return [monster for monster in GetAvailableMonsters()
                     if monster.startswith(text)]
-        elif len(line.split()) == 2:
-            return [monster for monster in GetAvailableMonsters()
-                    if monster.startswith(text)]
+        elif line[:startidx].split()[-1] == 'with':
+            return [weapon for weapon in PLAYER_DAMAGE.keys()
+                    if weapon.startswith(text)]
+        else:
+            if len(line.split()) == 2 or (len(line.split()) == 3
+                                          and 'with'.startswith(text)):
+                return ['with']
+
 
 
 if __name__ == '__main__':
