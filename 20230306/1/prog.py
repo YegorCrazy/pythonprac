@@ -4,6 +4,12 @@ import cmd
 
 CUSTOM_MONSTERS = ['jgsbat']
 
+MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY = {
+    'hello': 1,
+    'coords': 2,
+    'hp': 1
+    }
+
 
 class UnknownMonsterException(Exception):
     pass
@@ -13,6 +19,10 @@ class UndefinedParameterException(Exception):
 
     def __init__(self, param_name):
         self.param_name = param_name
+
+
+def GetAvailableMonsters():
+    return cowsay.list_cows() + CUSTOM_MONSTERS
 
 
 def InvertCoordinates(const_coord):
@@ -32,21 +42,20 @@ class MonsterCreationParams:
 
 def GetMonsterCreationParams(args):
     params = [args[0]]  # имя монстра всегда первое
-    params_names_and_quantity = {
-        'hello': 1,
-        'coords': 2,
-        'hp': 1
-        }
-    for param_name in params_names_and_quantity.keys():
+    for param_name in MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY.keys():
         if param_name not in args:
             raise UndefinedParameterException(param_name)
         index = args.index(param_name)
-        if params_names_and_quantity[param_name] == 1:
+        if MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY[param_name] == 1:
             params.append(args[index + 1])
         else:
             param_value = []
+            param_quantity = MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY[
+                param_name
+                ]
             for i in range(index + 1,
-                           index + 1 + params_names_and_quantity[param_name]):
+                           index + 1 + param_quantity
+                           ):
                 param_value.append(args[i])
             params.append(param_value)
     return MonsterCreationParams(*params)
@@ -232,6 +241,13 @@ class MUDShell(cmd.Cmd):
             print('Undefined parameter:', ex.param_name)
         except Exception as ex:
             print('Invalid arguments', ex)
+
+    def complete_addmon(self, text, line, startidx, endidx):
+        if line[:startidx].split()[-1] == 'addmon':
+            return GetAvailableMonsters()
+        command_args = MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY.keys()
+        if not line[:startidx].split()[-1] in command_args:
+            return [arg for arg in command_args if arg.startswith(text)]
 
 
 if __name__ == '__main__':
