@@ -188,11 +188,16 @@ class Dungeon:
         player.ChangePosition(player_position)
         self.CheckMonster(player)
 
-    def PerformPlayerAttack(self, player):
+    def PerformPlayerAttack(self, player, monster_name):
         # сюда приходят координаты из Player, то есть
         # как в массиве
-        if self.dungeon[player.position[0]][player.position[1]] is None:
-            print("No monster here")
+        if (
+            self.dungeon[player.position[0]][player.position[1]] is None
+            ) or (
+                self.dungeon[player.position[0]][player.position[1]].name
+                != monster_name
+                ):
+            print(f"No {monster_name} here")
         else:
             monster = self.dungeon[player.position[0]][player.position[1]]
             damage = monster.GetAttacked(PLAYER_DAMAGE)
@@ -235,8 +240,8 @@ class Player:
     def MoveDown(self):
         self.dungeon.MovePlayerDown(self)
 
-    def Attack(self):
-        self.dungeon.PerformPlayerAttack(self)
+    def Attack(self, monster_name):
+        self.dungeon.PerformPlayerAttack(self, monster_name)
 
 
 class MUDShell(cmd.Cmd):
@@ -280,7 +285,20 @@ class MUDShell(cmd.Cmd):
             return [arg for arg in command_args if arg.startswith(text)]
 
     def do_attack(self, args):
-        player.Attack()
+        args = args.split()
+        if len(args) < 1:
+            print('Monster name not specified')
+            return
+        monster_name = args[0]
+        player.Attack(monster_name)
+
+    def complete_attack(self, text, line, startidx, endidx):
+        if line[:startidx].split()[-1] == 'attack':
+            return [monster for monster in GetAvailableMonsters()
+                    if monster.startswith(text)]
+        elif len(line.split()) == 2:
+            return [monster for monster in GetAvailableMonsters()
+                    if monster.startswith(text)]
 
 
 if __name__ == '__main__':
