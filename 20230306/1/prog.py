@@ -1,5 +1,6 @@
 import cowsay
 import shlex
+import cmd
 
 CUSTOM_MONSTERS = ['jgsbat']
 
@@ -199,37 +200,43 @@ class Player:
         self.dungeon.MovePlayerDown(self)
 
 
+class MUDShell(cmd.Cmd):
+
+    prompt = '(MUD) '
+
+    def do_left(self, args):
+        player.MoveLeft()
+
+    def do_right(self, args):
+        player.MoveRight()
+
+    def do_down(self, args):
+        player.MoveDown()
+
+    def do_up(self, args):
+        player.MoveUp()
+
+    def do_addmon(self, args):
+        try:
+            options_splitted = shlex.split(args)
+            monster_options = GetMonsterCreationParams(
+                options_splitted
+                )
+            dungeon.AddMonster(monster_options.coords,
+                               monster_options.name,
+                               monster_options.greeting,
+                               monster_options.hp)
+        except UnknownMonsterException:
+            print('Cannot add unknown monster')
+        except UndefinedParameterException as ex:
+            print('Undefined parameter:', ex.param_name)
+        except Exception as ex:
+            print('Invalid arguments', ex)
+
+
 if __name__ == '__main__':
     dungeon_size = [10, 10]
     dungeon = Dungeon(dungeon_size)
     player = Player(dungeon)
     print('<<< Welcome to Python-MUD 0.1 >>>')
-    while True:
-        command = input()
-        match command.split(None, 1):
-            case ['left']:
-                player.MoveLeft()
-            case ['right']:
-                player.MoveRight()
-            case ['up']:
-                player.MoveUp()
-            case ['down']:
-                player.MoveDown()
-            case ['addmon', options]:
-                try:
-                    options_splitted = shlex.split(options)
-                    monster_options = GetMonsterCreationParams(
-                        options_splitted
-                        )
-                    dungeon.AddMonster(monster_options.coords,
-                                       monster_options.name,
-                                       monster_options.greeting,
-                                       monster_options.hp)
-                except UnknownMonsterException:
-                    print('Cannot add unknown monster')
-                except UndefinedParameterException as ex:
-                    print('Undefined parameter:', ex.param_name)
-                except Exception:
-                    print('Invalid arguments')
-            case _:
-                print('Invalid command')
+    MUDShell().cmdloop()
