@@ -3,6 +3,12 @@ import socket
 import shlex
 import asyncio
 
+PLAYER_DAMAGE = {
+    'sword': 10,
+    'spear': 15,
+    'axe': 20
+    }
+
 def InvertCoordinates(const_coord):
     coord = const_coord.copy()
     coord[0], coord[1] = coord[1], coord[0]
@@ -118,7 +124,8 @@ class Player:
     def Move(self, x, y):
         return self.dungeon.MovePlayer(self, x, y)
 
-    def Attack(self, monster_name, damage):
+    def Attack(self, monster_name, weapon):
+        damage = PLAYER_DAMAGE[weapon]
         return self.dungeon.PerformPlayerAttack(self, monster_name, damage)
 
 
@@ -147,7 +154,7 @@ async def ManageCommand(reader, writer):
                                                   int(command[5]))
                     writer.write(response.encode())
                 case "attack":
-                    response = player.Attack(command[1], int(command[2]))
+                    response = player.Attack(command[1], command[2])
                     writer.write(response.encode())
         except Exception as ex:
             print(ex)

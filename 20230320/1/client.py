@@ -12,11 +12,11 @@ MONSTER_CREATION_PARAMS_NAME_AND_QUANTITY = {
     'hp': 1
     }
 
-PLAYER_DAMAGE = {
-    'sword': 10,
-    'spear': 15,
-    'axe': 20
-    }
+PLAYER_WEAPONS = [
+    'sword',
+    'spear',
+    'axe'
+    ]
 
 
 class UnknownMonsterException(Exception):
@@ -226,21 +226,21 @@ class MUDShell(cmd.Cmd):
         monster_name = args[0]
         if 'with' in args:
             weapon = args[args.index('with') + 1]
-            if weapon not in PLAYER_DAMAGE.keys():
+            if weapon not in PLAYER_WEAPONS:
                 print('Unknown weapon')
                 return
         else:
             weapon = 'sword'
         PerformAttackCommand(self.network_adapter,
                              monster_name,
-                             PLAYER_DAMAGE[weapon])
+                             weapon)
 
     def complete_attack(self, text, line, startidx, endidx):
         if line[:startidx].split()[-1] == 'attack':
             return [monster for monster in GetAvailableMonsters()
                     if monster.startswith(text)]
         elif line[:startidx].split()[-1] == 'with':
-            return [weapon for weapon in PLAYER_DAMAGE.keys()
+            return [weapon for weapon in PLAYER_WEAPON
                     if weapon.startswith(text)]
         else:
             if len(line.split()) == 2 or (len(line.split()) == 3
