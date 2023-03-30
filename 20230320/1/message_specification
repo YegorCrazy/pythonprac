@@ -1,12 +1,8 @@
 Движение:
 Запрос - move mod_x mod_y
-Ответ - ok x y [monster_name monster_greeting]
 
 Создание монстра:
 Запрос - addmon name greeting x y hp
-Ответ - ok [replaced]
 
 Атака монстра:
-Запрос - attack name damage
-Ответ в случае отсутвие монстра: no
-Ответ в случае наличия монстра: ok damage hp_left
+Запрос - attack name weapon
