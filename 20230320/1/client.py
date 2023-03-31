@@ -3,6 +3,8 @@ import socket
 import cowsay
 import shlex
 import cmd
+import threading
+import readline
 
 CUSTOM_MONSTERS = ['jgsbat']
 
@@ -47,8 +49,22 @@ class NetworkAdapter:
         response = self.socket.recv(1024).decode()
         return response
 
+    def SendInfoToServerWithoutResponse(self, msg):
+        self.socket.sendall((msg + '\n').encode())
+
+    def GetInfoFromServer(self):
+        return self.socket.recv(1024).decode()
+
     def CloseSocket(self):
+        self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
+
+
+def PrintMessageFromNetworkAdapterToCmd(network_adapter, cmd):
+    while (network_adapter.socket.fileno() == -1 or
+           (message := network_adapter.GetInfoFromServer())):
+        print(f"\n{message}{cmd.prompt}{readline.get_line_buffer()}",
+              end="", flush=True)
 
 
 def MakeMoveMessage(x, y):
@@ -56,32 +72,10 @@ def MakeMoveMessage(x, y):
     return shlex.join(["move", str(x), str(y)])
 
 
-def PrintSuccessMoveMessage(response):
-    # получаем как (гор, вер)
-    new_x, new_y = response[1], response[2]
-    print(f'Moved to ({new_x}, {new_y})')
-    if len(response) > 3:
-        monster_name = response[3]
-        monster_greeting = response[4]
-        if monster_name in CUSTOM_MONSTERS:
-            with open(monster_name + '.cow', 'r') as file:
-                cowfile = cowsay.read_dot_cow(file)
-                print(cowsay.cowsay(monster_greeting,
-                                    cowfile=cowfile))
-        else:
-            print(cowsay.cowsay(monster_greeting,
-                                cow=monster_name))
-
-
 def PerformMoveCommand(network_adapter, x, y):
-    response = network_adapter.SendInfoToServer(
+    network_adapter.SendInfoToServerWithoutResponse(
         MakeMoveMessage(x, y)
         )
-    response = shlex.split(response)
-    if response[0] == 'ok':
-        PrintSuccessMoveMessage(response)
-    else:
-        print('Internal error while moving')
 
 
 class MonsterCreationParams:
@@ -126,23 +120,10 @@ def MakeAddmonMessage(monster_options):
                        str(monster_options.hp)])
 
 
-def PrintSuccessAddmonMessage(response, monster_options):
-    print(f'Added monster {monster_options.name} to '
-          f'({monster_options.coords[0]}, {monster_options.coords[1]}) '
-          f'saying {monster_options.greeting}')
-    if len(response) > 1:
-        print('Replaced the old monster')
-
-
 def PerformAddmonCommand(network_adapter, monster_options):
-    response = network_adapter.SendInfoToServer(
+    network_adapter.SendInfoToServerWithoutResponse(
         MakeAddmonMessage(monster_options)
         )
-    response = shlex.split(response)
-    if response[0] == 'ok':
-        PrintSuccessAddmonMessage(response, monster_options)
-    else:
-        print('Internal error while adding monster')
 
 
 def MakeAttackMessage(monster_name, damage):
@@ -150,27 +131,10 @@ def MakeAttackMessage(monster_name, damage):
     return shlex.join(["attack", monster_name, str(damage)])
 
 
-def PrintSuccessAttackMessage(response, monster_name):
-    damage = response[1]
-    hp_left = response[2]
-    print(f'Attacked {monster_name}, damage {damage} hp')
-    if int(hp_left) == 0:
-        print(f'{monster_name} died')
-    else:
-        print(f'{monster_name} now has {hp_left} hp')
-
-
 def PerformAttackCommand(network_adapter, monster_name, damage):
-    response = network_adapter.SendInfoToServer(
+    network_adapter.SendInfoToServerWithoutResponse(
         MakeAttackMessage(monster_name, damage)
         )
-    response = shlex.split(response)
-    if response[0] == 'ok':
-        PrintSuccessAttackMessage(response, monster_name)
-    elif response[0] == 'no':
-        print(f"No {monster_name} here")
-    else:
-        print('Internal error while attacking monster')
 
 
 class MUDShell(cmd.Cmd):
@@ -240,7 +204,7 @@ class MUDShell(cmd.Cmd):
             return [monster for monster in GetAvailableMonsters()
                     if monster.startswith(text)]
         elif line[:startidx].split()[-1] == 'with':
-            return [weapon for weapon in PLAYER_WEAPON
+            return [weapon for weapon in PLAYER_WEAPONS
                     if weapon.startswith(text)]
         else:
             if len(line.split()) == 2 or (len(line.split()) == 3
@@ -253,12 +217,17 @@ class MUDShell(cmd.Cmd):
 
 
 if __name__ == '__main__':
+    # аргументы: имя хост [порт]
     if len(sys.argv) < 2:
+        print('username not specified')
+        exit()
+    name = sys.argv[1]
+    if len(sys.argv) < 3:
         print('server host not specified')
         exit()
-    host = sys.argv[1]
-    if len(sys.argv) > 2:
-        port = int(sys.argv[2])
+    host = sys.argv[2]
+    if len(sys.argv) > 3:
+        port = int(sys.argv[3])
         network_adapter = NetworkAdapter(host, port)
     else:
         network_adapter = NetworkAdapter(host)
@@ -269,5 +238,15 @@ if __name__ == '__main__':
     except Exception:
         print("Can't access the server.")
     else:
-        print('<<< Welcome to Python-MUD 0.1 >>>')
-        shell.cmdloop()
+        resp = shell.network_adapter.SendInfoToServer("login " + name)
+        if resp == 'no':
+            print(f'name {name} is occupied, try another one')
+            exit()
+        elif resp == 'ok':
+            print(f'logined as {name}')
+            server_messages_getter = threading.Thread(
+                target=PrintMessageFromNetworkAdapterToCmd,
+                args=(shell.network_adapter, shell))
+            server_messages_getter.start()
+            print('<<< Welcome to Python-MUD 0.1 >>>')
+            shell.cmdloop()
