@@ -169,6 +169,9 @@ class Player:
 
 def PerformCommand(command, player, dungeon, player_name):
     match command[0]:
+        case "sayall":
+            return [Response(shlex.join([player_name + ':'] + command[1:]),
+                             'broadcast')]
         case "move":
             # здесь x, y в формате (гор, вер)
             x, y = command[1], command[2]
@@ -244,7 +247,7 @@ async def ManageCommand(reader, writer):
                                     await client.put(response.text)
                 except Exception as ex:
                     print(ex)
-                    writer.write("error".encode())
+                    writer.write("error\n".encode())
             elif q is receive:
                 receive = asyncio.create_task(clients[me].get())
                 writer.write(f"{q.result()}\n".encode())

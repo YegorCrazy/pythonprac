@@ -211,6 +211,10 @@ class MUDShell(cmd.Cmd):
                                           and 'with'.startswith(text)):
                 return ['with']
 
+    def do_sayall(self, args):
+        self.network_adapter.SendInfoToServerWithoutResponse(
+            'sayall ' + args.strip())
+
     def do_quit(self, args):
         self.network_adapter.CloseSocket()
         return True
