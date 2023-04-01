@@ -1,6 +1,7 @@
 """Module with Monster class."""
 
 import cowsay
+import os
 
 CUSTOM_MONSTERS = ['jgsbat']
 
@@ -13,7 +14,9 @@ class Monster:
         self.name = name
         self.hp = hp
         if name in CUSTOM_MONSTERS:
-            with open('./custom_cows/' + name + '.cow', 'r') as cowfile:
+            path_to_directory = os.path.dirname(os.path.abspath(__file__))
+            with open(path_to_directory +
+                      '/custom_cows/' + name + '.cow', 'r') as cowfile:
                 self.cowfile = cowsay.read_dot_cow(cowfile)
             self.is_custom = True
         else:
