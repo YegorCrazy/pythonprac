@@ -18,9 +18,9 @@ async def MoveMonsters(dungeon):
     """
     directions_dict = {
         'right': [1, 0],
-        'left': [-1, 0],
-        'down': [1, 0],
-        'up': [-1, 0]
+        #'left': [-1, 0],
+        #'down': [1, 0],
+        #'up': [-1, 0]
         }
     while True:
         if len(dungeon.monsters) != 0:
@@ -30,7 +30,7 @@ async def MoveMonsters(dungeon):
                 x_move = directions_dict[direction][0]
                 y_move = directions_dict[direction][1]
                 move_result = dungeon.MoveMonster(monster, x_move, y_move)
-                if move_result != False:
+                if move_result is not False:
                     break
             responses = [Response(f'{monster.name} moved one cell '
                                   f'{direction}',
@@ -86,6 +86,7 @@ class Dungeon:
                 Response(broadcast_text, 'others')]
 
     def AddPlayer(self, player, x=0, y=0):
+        """Register player in dungeon."""
         self.players[x][y][player.nickname] = player
 
     def CheckMonster(self, player):
@@ -113,8 +114,9 @@ class Dungeon:
         # сюда приходят координаты из Monster, так что тут
         # инвертировать ничего не нужно
         responses = []
-        for player in self.players[monster.position[0]][
-            monster.position[1]].values():
+        players = self.players[monster.position[0]][
+            monster.position[1]].values()
+        for player in players:
             text = monster.ImpactOnPlayer(player)
             responses.append(Response(text, 'personal', player.nickname))
         return responses
