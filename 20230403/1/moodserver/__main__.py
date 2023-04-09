@@ -4,4 +4,7 @@ import asyncio
 from .server import Main
 
 if __name__ == '__main__':
-    asyncio.run(Main())
+    try:
+        asyncio.run(Main())
+    except KeyboardInterrupt:
+        print('Server is down')

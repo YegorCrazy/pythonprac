@@ -2,28 +2,44 @@
 
 import shlex
 import asyncio
-from .dungeon import Dungeon
+from .dungeon import Dungeon, MoveMonsters
 from .player import Player
 from .response import Response
 
 # ВНИМАНИЕ, ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
-dungeon_size = [10, 10]
-dungeon = Dungeon(dungeon_size)
 occupied_names = set()
 clients = {}
 
 
-async def ManageResponses(responses, me):
+async def ManageResponses(responses, me=None):
+    """
+    Send messages to players.
+
+    Put messages to player's queues. Player's names are
+    got from response "player" field or "me" argument.
+    """
+    global clients
     for response in responses:
         if response.send_method == 'broadcast':
             for client in clients.values():
                 await client.put(response.text)
         elif response.send_method == 'personal':
-            await clients[me].put(response.text)
+            if me is None and response.player is None:
+                raise Exception('don\'t know where to send message')
+            send_to = me if me is not None else response.player
+            await clients[send_to].put(response.text)
         elif response.send_method == 'others':
+            if me is None and response.player is None:
+                raise Exception('don\'t know where to send message')
+            send_to = me if me is not None else response.player
             for client in clients.values():
-                if client != clients[me]:
+                if client != clients[send_to]:
                     await client.put(response.text)
+
+
+# ВНИМАНИЕ, ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
+dungeon_size = [10, 10]
+dungeon = Dungeon(dungeon_size, ManageResponses)
 
 
 def PerformCommand(command, player, dungeon, player_name):
@@ -122,6 +138,9 @@ async def ManageCommand(reader, writer):
 
 async def Main():
     """Server start and serve function."""
-    server = await asyncio.start_server(ManageCommand, '0.0.0.0', 1337)
-    async with server:
-        await server.serve_forever()
+    to_run = await asyncio.gather(asyncio.start_server(ManageCommand,
+                                                       '0.0.0.0',
+                                                       1337),
+                                  MoveMonsters(dungeon))
+    async with to_run:
+        await to_run.serve_forever()

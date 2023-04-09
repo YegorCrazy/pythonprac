@@ -9,10 +9,13 @@ CUSTOM_MONSTERS = ['jgsbat']
 class Monster:
     """Monster class."""
 
-    def __init__(self, name, greeting, hp):
+    def __init__(self, name, greeting, hp, position):
         self.greeting = greeting
         self.name = name
         self.hp = hp
+        # позиция задается как координаты в массиве,
+        # то есть (вер, гор)
+        self.position = position
         if name in CUSTOM_MONSTERS:
             path_to_directory = os.path.dirname(os.path.abspath(__file__))
             with open(path_to_directory +
@@ -21,6 +24,10 @@ class Monster:
             self.is_custom = True
         else:
             self.is_custom = False
+
+    def ChangePosition(self, new_pos):
+        """Change monster position."""
+        self.position = new_pos
 
     def ImpactOnPlayer(self, player):
         """

@@ -9,7 +9,8 @@ class Response:
     what messages to send to players.
     """
 
-    def __init__(self, text, send_method):
+    def __init__(self, text, send_method, player=None):
         assert send_method in ['broadcast', 'personal', 'others']
         self.text = text
         self.send_method = send_method
+        self.player = player
