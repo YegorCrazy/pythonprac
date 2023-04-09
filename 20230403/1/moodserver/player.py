@@ -13,8 +13,9 @@ PLAYER_DAMAGE = {
 class Player:
     """Player class."""
 
-    def __init__(self, dungeon):
+    def __init__(self, dungeon, nickname):
         self.dungeon = dungeon
+        self.nickname = nickname
         # позиция задается как координаты в массиве,
         # то есть (вер, гор)
         self.position = [0, 0]

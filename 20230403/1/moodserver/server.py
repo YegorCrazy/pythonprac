@@ -70,7 +70,7 @@ async def ManageCommand(reader, writer):
     # очередь игрока me тут еще не создана
     for client in clients.values():
         await client.put(connected_message)
-    player = Player(dungeon)
+    player = Player(dungeon, me)
     clients[me] = asyncio.Queue()
     send = asyncio.create_task(reader.readline())
     receive = asyncio.create_task(clients[me].get())
