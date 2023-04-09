@@ -19,6 +19,7 @@ class Player:
         # позиция задается как координаты в массиве,
         # то есть (вер, гор)
         self.position = [0, 0]
+        dungeon.AddPlayer(self)
 
     def ChangePosition(self, new_pos):
         """Change player position and return after-move message."""

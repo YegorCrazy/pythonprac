@@ -14,6 +14,8 @@ class Dungeon:
         self.dungeon_size = size
         self.dungeon = [[None for i in range(size[0])]
                         for j in range(size[1])]
+        self.players = [[dict() for i in range(size[0])]
+                        for j in range(size[1])]
 
     def AddMonster(self, coord, name, greeting, hp, player_name):
         """
@@ -43,6 +45,9 @@ class Dungeon:
         return [Response(personal_text, 'personal'),
                 Response(broadcast_text, 'others')]
 
+    def AddPlayer(self, player, x=0, y=0):
+        self.players[x][y][player.nickname] = player
+
     def CheckMonster(self, player):
         """
         Check if player meets a monster.
@@ -59,15 +64,27 @@ class Dungeon:
             return ''
 
     def MovePlayer(self, player, x, y):
-        """Move player in the dungeon."""
+        """
+        Move player in the dungeon.
+
+        x and y are changes to coordinates.
+        """
         # сюда приходят координаты из Player, то есть
         # как в массиве, инвертируем, чтобы первая
         # координата была горизонталью, а вторая вертикалью
         # при этом (x, y) как (гор, вер)
         player_position = InvertCoordinates(player.position)
+        # удаляем игрока со старой позиции
+        del self.players[player_position[0]][player_position[1]][
+            player.nickname
+            ]
         player_position[0] = (player_position[0] + x) % self.dungeon_size[0]
         player_position[1] = (player_position[1] + y) % self.dungeon_size[1]
-        # теперь обратно
+        # добавляем игрока на новую позицию
+        self.players[player_position[0]][player_position[1]][
+            player.nickname
+            ] = player
+        # теперь инвертируем обратно
         player_position = InvertCoordinates(player_position)
         response = player.ChangePosition(player_position)
         monster = self.CheckMonster(player)
