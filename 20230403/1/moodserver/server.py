@@ -13,6 +13,19 @@ occupied_names = set()
 clients = {}
 
 
+async def ManageResponses(responses, me):
+    for response in responses:
+        if response.send_method == 'broadcast':
+            for client in clients.values():
+                await client.put(response.text)
+        elif response.send_method == 'personal':
+            await clients[me].put(response.text)
+        elif response.send_method == 'others':
+            for client in clients.values():
+                if client != clients[me]:
+                    await client.put(response.text)
+
+
 def PerformCommand(command, player, dungeon, player_name):
     """
     Perform server command.
@@ -86,16 +99,7 @@ async def ManageCommand(reader, writer):
                     if command == []:
                         continue
                     responses = PerformCommand(command, player, dungeon, me)
-                    for response in responses:
-                        if response.send_method == 'broadcast':
-                            for client in clients.values():
-                                await client.put(response.text)
-                        elif response.send_method == 'personal':
-                            await clients[me].put(response.text)
-                        elif response.send_method == 'others':
-                            for client in clients.values():
-                                if client != clients[me]:
-                                    await client.put(response.text)
+                    await ManageResponses(responses, me)
                 except Exception as ex:
                     print(ex)
                     writer.write("error\n".encode())
