@@ -20,8 +20,8 @@ async def MoveMonsters(dungeon):
     directions_dict = {
         'right': [1, 0],
         'left': [-1, 0],
-        'down': [1, 0],
-        'up': [-1, 0]
+        'down': [0, 1],
+        'up': [0, -1]
         }
     while True:
         if len(dungeon.monsters) != 0:
