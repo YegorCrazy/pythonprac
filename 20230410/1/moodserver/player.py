@@ -2,6 +2,7 @@
 
 from .utils import InvertCoordinates
 from .response import Response
+from .l10n import _
 
 PLAYER_DAMAGE = {
     'sword': 10,
@@ -31,7 +32,7 @@ class Player:
         # чтобы вывести в человеческом формате, надо
         # инвертировать координаты
         output_pos = InvertCoordinates(self.position)
-        return f'Moved to ({output_pos[0]}, {output_pos[1]})'
+        return _('Moved to ({}, {})').format(output_pos[0], output_pos[1])
 
     def Move(self, x, y):
         """Try to move a player through the dungeon."""

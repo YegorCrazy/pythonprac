@@ -4,6 +4,7 @@ from .utils import InvertCoordinates
 from .response import Response
 from .player import PLAYER_DAMAGE
 from .monster import Monster
+from .l10n import _, directions_translated_dict, weapons_names_translated_dict
 
 import random
 import asyncio
@@ -32,8 +33,8 @@ async def MoveMonsters(dungeon):
                 move_result = dungeon.MoveMonster(monster, x_move, y_move)
                 if move_result is not False:
                     break
-            responses = [Response(f'{monster.name} moved one cell '
-                                  f'{direction}',
+            responses = [Response(_('{} moved one cell {}').format(
+                monster.name, directions_translated_dict[direction]),
                                   'broadcast')]
             print(f'{monster.name} moved one cell '
                   f'{direction}')
@@ -75,13 +76,15 @@ class Dungeon:
         monster_to_add = Monster(name, greeting, hp, array_coord)
         self.dungeon[array_coord[0]][array_coord[1]] = monster_to_add
         self.monsters.add(monster_to_add)
-        personal_text = (f'Added monster to ({coord[0]}, {coord[1]}) '
-                         f'saying {greeting}')
-        broadcast_text = (f'{player_name} added monster to ({coord[0]}, '
-                          f'{coord[1]}) saying {greeting}')
+        personal_text = _('Added monster to ({}, {}) '
+                          'saying {}').format(
+                              coord[0], coord[1], greeting)
+        broadcast_text = _('{} added monster to ({}, '
+                           '{}) saying {}').format(
+                                player_name, coord[0], coord[1], greeting)
         if replace_flag:
-            personal_text += '\n' + 'Replaced the old monster'
-            broadcast_text += 'and replaced the old monster'
+            personal_text += '\n' + _('Replaced the old monster')
+            broadcast_text += _(' and replaced the old monster')
         return [Response(personal_text, 'personal'),
                 Response(broadcast_text, 'others')]
 
@@ -192,23 +195,30 @@ class Dungeon:
                 self.dungeon[player.position[0]][player.position[1]].name
                 != monster_name
                 ):
-            return [Response(f'No {monster_name} here', 'personal')]
+            return [Response(_('No {} here').format(
+                monster_name), 'personal')]
         else:
             weapon_damage = PLAYER_DAMAGE[weapon]
             monster = self.dungeon[player.position[0]][player.position[1]]
             damage = monster.GetAttacked(weapon_damage)
-            personal_text = (f'Attacked {monster_name} with {weapon}, '
-                             f'damage {damage} hp')
-            broadcast_text = (f'{player_name} attacked {monster_name} '
-                              f'with {weapon}, damage {damage} hp')
+            weapon_name_translated = weapons_names_translated_dict[weapon]
+            personal_text = _('Attacked {} with {}, '
+                              'damage {} hp').format(
+                                  monster_name, weapon_name_translated, damage)
+            broadcast_text = _('{} attacked {} '
+                               'with {}, damage {} hp').format(
+                                   player_name, monster_name,
+                                   weapon_name_translated, damage)
             if monster.hp == 0:
                 self.dungeon[player.position[0]][player.position[1]] = None
                 self.monsters.remove(monster)
                 del monster
-                personal_text += f'\n{monster_name} died'
-                broadcast_text += f'\n{monster_name} died'
+                personal_text += '\n' + _('{} died').format(monster_name)
+                broadcast_text += '\n' + _('{} died').format(monster_name)
             else:
-                personal_text += f'\n{monster_name} now has {monster.hp} hp'
-                broadcast_text += f'\n{monster_name} now has {monster.hp} hp'
+                personal_text += '\n' + _('{} now has {} hp').format(
+                    monster_name, monster.hp)
+                broadcast_text += '\n' + _('{} now has {} hp').format(
+                    monster_name, monster.hp)
             return [Response(personal_text, 'personal'),
                     Response(broadcast_text, 'others')]
