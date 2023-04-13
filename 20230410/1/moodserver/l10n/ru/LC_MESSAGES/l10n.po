@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-13 23:56+0300\n"
+"POT-Creation-Date: 2023-04-14 00:41+0300\n"
 "PO-Revision-Date: 2023-04-13 23:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -90,4 +90,12 @@ msgstr "Топор"
 #: player.py:35
 msgid "Moved to ({}, {})"
 msgstr "Передвинулся на ({}, {})"
+
+#: server.py:96
+msgid "{} was connected"
+msgstr "{} подключился"
+
+#: server.py:129
+msgid "{} was disconnected"
+msgstr "{} отключился"
 

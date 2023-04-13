@@ -5,6 +5,7 @@ import asyncio
 from .dungeon import Dungeon, MoveMonsters
 from .player import Player
 from .response import Response
+from .l10n import _
 
 # ВНИМАНИЕ, ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
 occupied_names = set()
@@ -92,7 +93,7 @@ async def ManageCommand(reader, writer):
         return
     writer.write('ok'.encode())
     occupied_names.add(me)
-    connected_message = f'{me} was connected'
+    connected_message = _('{} was connected').format(me)
     print(connected_message)
     global dungeon
     global clients
@@ -125,7 +126,7 @@ async def ManageCommand(reader, writer):
                 await writer.drain()
     send.cancel()
     receive.cancel()
-    disconnected_message = f'{me} was disconnected'
+    disconnected_message = _('{} was disconnected').format(me)
     print(disconnected_message)
     del clients[me]
     # очередь игрока me уже удалена
