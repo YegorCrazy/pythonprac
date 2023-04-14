@@ -4,7 +4,7 @@ from .utils import InvertCoordinates
 from .response import Response
 from .player import PLAYER_DAMAGE
 from .monster import Monster
-from .l10n import _, directions_translated_dict, weapons_names_translated_dict
+from .l10n import Translatable, NTranslatable
 
 import random
 import asyncio
@@ -33,8 +33,8 @@ async def MoveMonsters(dungeon):
                 move_result = dungeon.MoveMonster(monster, x_move, y_move)
                 if move_result is not False:
                     break
-            responses = [Response(_('{} moved one cell {}').format(
-                monster.name, directions_translated_dict[direction]),
+            responses = [Response('{} moved one cell {}',
+                                  [monster.name, Translatable(direction)],
                                   'broadcast')]
             print(f'{monster.name} moved one cell '
                   f'{direction}')
@@ -76,17 +76,15 @@ class Dungeon:
         monster_to_add = Monster(name, greeting, hp, array_coord)
         self.dungeon[array_coord[0]][array_coord[1]] = monster_to_add
         self.monsters.add(monster_to_add)
-        personal_text = _('Added monster to ({}, {}) '
-                          'saying {}').format(
-                              coord[0], coord[1], greeting)
-        broadcast_text = _('{} added monster to ({}, '
-                           '{}) saying {}').format(
-                                player_name, coord[0], coord[1], greeting)
+        personal_text = 'Added monster to ({}, {}) saying {}'
+        personal_insert_values = [coord[0], coord[1], greeting]
+        broadcast_text = '{} added monster to ({}, {}) saying {}'
+        broadcast_insert_values = [player_name, coord[0], coord[1], greeting]
         if replace_flag:
-            personal_text += '\n' + _('Replaced the old monster')
-            broadcast_text += _(' and replaced the old monster')
-        return [Response(personal_text, 'personal'),
-                Response(broadcast_text, 'others')]
+            personal_text += '\nReplaced the old monster'
+            broadcast_text += ' and replaced the old monster'
+        return [Response(personal_text, personal_insert_values, 'personal'),
+                Response(broadcast_text, broadcast_insert_values, 'others')]
 
     def AddPlayer(self, player, x=0, y=0):
         """Register player in dungeon."""
@@ -121,7 +119,7 @@ class Dungeon:
             monster.position[1]].values()
         for player in players:
             text = monster.ImpactOnPlayer(player)
-            responses.append(Response(text, 'personal', player.nickname))
+            responses.append(Response(text, [], 'personal', player.nickname))
         return responses
 
     def MoveMonster(self, monster, x, y):
@@ -174,11 +172,12 @@ class Dungeon:
         self.players[player_position[0]][player_position[1]][
             player.nickname
             ] = player
-        response = player.ChangePosition(player_position)
+        move_response = player.ChangePosition(player_position)
+        responses = [move_response]
         monster = self.CheckMonster(player)
         if monster != '':
-            response += '\n' + monster
-        return response
+            responses.append(Response(monster, [], 'personal'))
+        return responses
 
     def PerformPlayerAttack(self, player, monster_name, weapon, player_name):
         """
@@ -195,30 +194,34 @@ class Dungeon:
                 self.dungeon[player.position[0]][player.position[1]].name
                 != monster_name
                 ):
-            return [Response(_('No {} here').format(
-                monster_name), 'personal')]
+            return [Response('No {} here', [monster_name], 'personal')]
         else:
             weapon_damage = PLAYER_DAMAGE[weapon]
             monster = self.dungeon[player.position[0]][player.position[1]]
             damage = monster.GetAttacked(weapon_damage)
-            weapon_name_translated = weapons_names_translated_dict[weapon]
-            personal_text = _('Attacked {} with {}, '
-                              'damage {} hp').format(
-                                  monster_name, weapon_name_translated, damage)
-            broadcast_text = _('{} attacked {} '
-                               'with {}, damage {} hp').format(
-                                   player_name, monster_name,
-                                   weapon_name_translated, damage)
+            personal_text = 'Attacked {} with {}, damage {} {}'
+            personal_insert_values = [monster_name, Translatable(weapon),
+                                      damage, NTranslatable('hp', 'hp', damage)]
+            broadcast_text = '{} attacked {} with {}, damage {} {}'
+            broadcast_insert_values = [player_name, monster_name, Translatable(weapon),
+                                       damage, NTranslatable('hp', 'hp', damage)]
+            responses = [Response(personal_text, personal_insert_values, 'personal'),
+                         Response(broadcast_text, broadcast_insert_values, 'others')]
             if monster.hp == 0:
                 self.dungeon[player.position[0]][player.position[1]] = None
                 self.monsters.remove(monster)
                 del monster
-                personal_text += '\n' + _('{} died').format(monster_name)
-                broadcast_text += '\n' + _('{} died').format(monster_name)
+                personal_text = '{} died'
+                personal_insert_values = [monster_name]
+                broadcast_text = '{} died'
+                broadcast_insert_values = [monster_name]
             else:
-                personal_text += '\n' + _('{} now has {} hp').format(
-                    monster_name, monster.hp)
-                broadcast_text += '\n' + _('{} now has {} hp').format(
-                    monster_name, monster.hp)
-            return [Response(personal_text, 'personal'),
-                    Response(broadcast_text, 'others')]
+                personal_text = '{} now has {} {}'
+                personal_insert_values = [monster_name, monster.hp,
+                                          NTranslatable('hp', 'hp', monster.hp)]
+                broadcast_text = '{} now has {} {}'
+                broadcast_insert_values = [monster_name, monster.hp,
+                                           NTranslatable('hp', 'hp', monster.hp)]
+            responses += [Response(personal_text, personal_insert_values, 'personal'),
+                          Response(broadcast_text, broadcast_insert_values, 'others')]
+            return responses

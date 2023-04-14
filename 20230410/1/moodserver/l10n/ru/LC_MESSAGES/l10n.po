@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2023-04-14 00:41+0300\n"
+"POT-Creation-Date: 2023-04-14 03:07+0300\n"
 "PO-Revision-Date: 2023-04-13 23:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
@@ -19,83 +19,100 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.12.1\n"
 
-#: dungeon.py:36
-msgid "{} moved one cell {}"
-msgstr "{} передвинулся на одну клетку {}"
-
-#: dungeon.py:79
-msgid "Added monster to ({}, {}) saying {}"
-msgstr "Добавлен монстр на клетку ({}, {}), говорящий {}"
-
-#: dungeon.py:82
-msgid "{} added monster to ({}, {}) saying {}"
-msgstr "{} добавил монстра на клетку ({}, {}), говорящего {}"
-
-#: dungeon.py:86
-msgid "Replaced the old monster"
-msgstr "Старый монстр заменен"
-
-#: dungeon.py:87
-msgid " and replaced the old monster"
-msgstr " и заменил старого монстра"
-
-#: dungeon.py:198
-msgid "No {} here"
-msgstr "Здесь нет {}"
-
-#: dungeon.py:205
-msgid "Attacked {} with {}, damage {} hp"
-msgstr "Атаковал {} оружием {}, урон {} hp"
-
-#: dungeon.py:208
-msgid "{} attacked {} with {}, damage {} hp"
-msgstr "{} атаковал {} оружием {}, урон {} hp"
-
-#: dungeon.py:216 dungeon.py:217
-msgid "{} died"
-msgstr "{} мертв"
-
-#: dungeon.py:219 dungeon.py:221
-msgid "{} now has {} hp"
-msgstr "У {} теперь {} hp"
-
-#: l10n.py:8
-msgid "right"
-msgstr "вправо"
-
-#: l10n.py:9
-msgid "left"
-msgstr "влево"
-
-#: l10n.py:10
-msgid "up"
-msgstr "вверх"
-
-#: l10n.py:11
-msgid "down"
-msgstr "вниз"
-
-#: l10n.py:15
-msgid "sword"
-msgstr "Меч"
-
-#: l10n.py:16
-msgid "spear"
-msgstr "Копье"
-
-#: l10n.py:17
-msgid "axe"
-msgstr "Топор"
-
-#: player.py:35
-msgid "Moved to ({}, {})"
-msgstr "Передвинулся на ({}, {})"
-
-#: server.py:96
+#: text_to_translate.py:15
 msgid "{} was connected"
 msgstr "{} подключился"
 
-#: server.py:129
+#: text_to_translate.py:16
 msgid "{} was disconnected"
 msgstr "{} отключился"
+
+#: text_to_translate.py:17
+msgid "right"
+msgstr "вправо"
+
+#: text_to_translate.py:18
+msgid "left"
+msgstr "влево"
+
+#: text_to_translate.py:19
+msgid "up"
+msgstr "вверх"
+
+#: text_to_translate.py:20
+msgid "down"
+msgstr "вниз"
+
+#: text_to_translate.py:21
+msgid "sword"
+msgstr "Меч"
+
+#: text_to_translate.py:22
+msgid "spear"
+msgstr "Копье"
+
+#: text_to_translate.py:23
+msgid "axe"
+msgstr "Топор"
+
+#: text_to_translate.py:24
+msgid "{} moved one cell {}"
+msgstr "{} передвинулся на одну клетку {}"
+
+#: text_to_translate.py:25
+msgid "Added monster to ({}, {}) saying {}"
+msgstr "Добавлен монстр на клетку ({}, {}), говорящий {}"
+
+#: text_to_translate.py:26
+msgid ""
+"Added monster to ({}, {}) saying {}\n"
+"Replaced the old monster"
+msgstr ""
+"Добавлен монстр на клетку ({}, {}), говорящий {}\n"
+"Старый монстр был заменен"
+
+#: text_to_translate.py:27
+msgid "{} added monster to ({}, {}) saying {}"
+msgstr "{} добавил монстра на клетку ({}, {}), говорящего {}"
+
+#: text_to_translate.py:28
+msgid "{} added monster to ({}, {}) saying {} and replaced the old monster"
+msgstr ""
+"{} добавил монстра на клетку ({}, {}), говорящего {}, и заменил старого "
+"монстра"
+
+#: text_to_translate.py:29
+msgid "No {} here"
+msgstr "Здесь нет {}"
+
+#: text_to_translate.py:30
+msgid "Attacked {} with {}, damage {} {}"
+msgstr "Атаковал {} оружием {}, урон {} {}"
+
+#: text_to_translate.py:31
+msgid "{} attacked {} with {}, damage {} {}"
+msgstr "{} атаковал {} оружием {}, урон {} {}"
+
+#: text_to_translate.py:32
+msgid "{} died"
+msgstr "{} мертв"
+
+#: text_to_translate.py:33
+msgid "{} now has {} {}"
+msgstr "У {} теперь {} {}"
+
+#: text_to_translate.py:34
+msgid "Moved to ({}, {})"
+msgstr "Передвинулся на ({}, {})"
+
+#: text_to_translate.py:35
+msgid "Set {} locale"
+msgstr "Установлена локаль {}"
+
+#: text_to_translate.py:39
+msgid "hp"
+msgid_plural "hp"
+msgstr[0] "очко здоровья"
+msgstr[1] "очка здоровья"
+msgstr[2] "очков здоровья"
 

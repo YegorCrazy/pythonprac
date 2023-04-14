@@ -5,12 +5,12 @@ import asyncio
 from .dungeon import Dungeon, MoveMonsters
 from .player import Player
 from .response import Response
-from .l10n import _
+from .l10n import TranslateWithInsertions
 
 # ВНИМАНИЕ, ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
 occupied_names = set()
 clients = {}
-
+clients_locales = {}
 
 async def ManageResponses(responses, me=None):
     """
@@ -22,20 +22,31 @@ async def ManageResponses(responses, me=None):
     global clients
     for response in responses:
         if response.send_method == 'broadcast':
-            for client in clients.values():
-                await client.put(response.text)
+            for client in clients:
+                locale = clients_locales[client]
+                text_to_send = TranslateWithInsertions(response.text,
+                                                       response.insert_values,
+                                                       locale)
+                await clients[client].put(text_to_send)
         elif response.send_method == 'personal':
             if me is None and response.player is None:
                 raise Exception('don\'t know where to send message')
             send_to = me if me is not None else response.player
-            await clients[send_to].put(response.text)
+            text_to_send = TranslateWithInsertions(response.text,
+                                                   response.insert_values,
+                                                   clients_locales[send_to])
+            await clients[send_to].put(text_to_send)
         elif response.send_method == 'others':
             if me is None and response.player is None:
                 raise Exception('don\'t know where to send message')
-            send_to = me if me is not None else response.player
-            for client in clients.values():
-                if client != clients[send_to]:
-                    await client.put(response.text)
+            not_send_to = me if me is not None else response.player
+            for client in clients:
+                if client != not_send_to:
+                    locale = clients_locales[client]
+                    text_to_send = TranslateWithInsertions(response.text,
+                                                           response.insert_values,
+                                                           locale)
+                    await clients[client].put(text_to_send)
 
 
 # ВНИМАНИЕ, ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
@@ -52,7 +63,7 @@ def PerformCommand(command, player, dungeon, player_name):
     """
     match command[0]:
         case "sayall":
-            return [Response(shlex.join([player_name + ':'] + command[1:]),
+            return [Response(shlex.join([player_name + ':'] + command[1:]), [],
                              'broadcast')]
         case "move":
             # здесь x, y в формате (гор, вер)
@@ -71,6 +82,8 @@ def PerformCommand(command, player, dungeon, player_name):
             responses = player.Attack(command[1], command[2], player_name)
             return responses
 
+connected_message_template = '{} was connected'
+disconnected_message_template = '{} was disconnected'
 
 async def ManageCommand(reader, writer):
     """
@@ -93,14 +106,13 @@ async def ManageCommand(reader, writer):
         return
     writer.write('ok'.encode())
     occupied_names.add(me)
-    connected_message = _('{} was connected').format(me)
-    print(connected_message)
+    print(connected_message_template.format(me))
     global dungeon
     global clients
     # очередь игрока me тут еще не создана
-    for client in clients.values():
-        await client.put(connected_message)
+    await ManageResponses([Response(connected_message_template, [me], 'broadcast')])
     player = Player(dungeon, me)
+    clients_locales[me] = 'en'
     clients[me] = asyncio.Queue()
     send = asyncio.create_task(reader.readline())
     receive = asyncio.create_task(clients[me].get())
@@ -115,23 +127,28 @@ async def ManageCommand(reader, writer):
                     command = shlex.split(data)
                     if command == []:
                         continue
-                    responses = PerformCommand(command, player, dungeon, me)
-                    await ManageResponses(responses, me)
+                    elif command[0] == 'locale':
+                        clients_locales[me] = command[1]
+                        await ManageResponses([Response('Set {} locale', [command[1]],
+                                                        'personal')], me)
+                    else:
+                        responses = PerformCommand(command, player, dungeon, me)
+                        await ManageResponses(responses, me)
                 except Exception as ex:
                     print(ex)
                     writer.write("error\n".encode())
             elif q is receive:
                 receive = asyncio.create_task(clients[me].get())
+                
                 writer.write(f"{q.result()}\n".encode())
                 await writer.drain()
     send.cancel()
     receive.cancel()
-    disconnected_message = _('{} was disconnected').format(me)
-    print(disconnected_message)
+    print(disconnected_message_template.format(me))
     del clients[me]
+    del clients_locales[me]
     # очередь игрока me уже удалена
-    for client in clients.values():
-        await client.put(disconnected_message)
+    await ManageResponses([Response(disconnected_message_template, [me], 'broadcast')])
     occupied_names.remove(me)
     writer.close()
     await writer.wait_closed()
