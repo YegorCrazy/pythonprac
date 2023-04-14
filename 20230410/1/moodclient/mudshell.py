@@ -11,6 +11,7 @@ from .monster_options import GetAvailableMonsters
 from .addmon import PerformAddmonCommand
 from .attack import PerformAttackCommand, PLAYER_WEAPONS
 
+supported_languages = ['en', 'ru']
 
 class MUDShell(cmd.Cmd):
     """Shell class."""
@@ -90,6 +91,18 @@ class MUDShell(cmd.Cmd):
     def do_sayall(self, args):  # noqa: D102
         self.network_adapter.SendInfoToServerWithoutResponse(
             'sayall ' + args.strip())
+
+    def do_locale(self, args):  #noqa: D102
+        locale = args.strip()
+        if locale in supported_languages:
+            self.network_adapter.SendInfoToServerWithoutResponse(
+                'locale ' + locale)
+        else:
+            print('Unknown locale')
+
+    def complete_locale(self, text, line, startidx, endidx):  #noqa: D102
+        return [locale for locale in supported_languages
+                if locale.startswith(text)]
 
     def do_quit(self, args):  # noqa: D102
         self.network_adapter.CloseSocket()
