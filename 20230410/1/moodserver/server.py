@@ -132,7 +132,7 @@ async def ManageCommand(reader, writer):
                         continue
                     elif command[0] == 'locale':
                         clients_locales[me] = command[1]
-                        await ManageResponses([Response('Set {} locale', [command[1]],
+                        await ManageResponses([Response('Set up locale: {}', [command[1]],
                                                         'personal')], me)
                     else:
                         responses = PerformCommand(command, player, dungeon, me)

@@ -35,7 +35,7 @@ text_to_translate = [
     _('{} died'),
     _('{} now has {} {}'),
     _('Moved to ({}, {})'),
-    _('Set {} locale'),
+    _('Set up locale: {}'),
     ]
 
 text_to_ntranslate = [
