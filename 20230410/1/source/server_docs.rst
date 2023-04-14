@@ -21,6 +21,10 @@ Moodserver module documentation
    :members:
    :private-members:
    
+.. automodule:: moodserver.l10n
+   :members:
+   :private-members:
+   
 .. automodule:: moodserver.utils
    :members:
    :private-members:
