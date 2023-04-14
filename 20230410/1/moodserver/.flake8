@@ -1,2 +1,3 @@
 [flake8]
-exclude = custom_cows
+exclude = custom_cows, l10n.pot
+max-line-length = 100

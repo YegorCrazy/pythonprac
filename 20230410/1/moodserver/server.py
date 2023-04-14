@@ -12,6 +12,7 @@ occupied_names = set()
 clients = {}
 clients_locales = {}
 
+
 async def ManageResponses(responses, me=None):
     """
     Send messages to players.
@@ -82,8 +83,10 @@ def PerformCommand(command, player, dungeon, player_name):
             responses = player.Attack(command[1], command[2], player_name)
             return responses
 
+
 connected_message_template = '{} was connected'
 disconnected_message_template = '{} was disconnected'
+
 
 async def ManageCommand(reader, writer):
     """
@@ -139,7 +142,6 @@ async def ManageCommand(reader, writer):
                     writer.write("error\n".encode())
             elif q is receive:
                 receive = asyncio.create_task(clients[me].get())
-                
                 writer.write(f"{q.result()}\n".encode())
                 await writer.drain()
     send.cancel()

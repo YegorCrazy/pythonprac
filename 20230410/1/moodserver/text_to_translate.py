@@ -4,12 +4,15 @@ This module stores text that should be translated to help pybabel see it.
 To see where this text is used in a module please use grep.
 """
 
+
 def _(arg):
     return arg
 
 
 def ngettext(arg):
+    """Make pybabel think that we translate some stuff."""
     return arg
+
 
 text_to_translate = [
     _('{} was connected'),
@@ -38,6 +41,3 @@ text_to_translate = [
 text_to_ntranslate = [
     ngettext('hp', 'hp', 7)
     ]
-    
-    
-    

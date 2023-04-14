@@ -1,4 +1,7 @@
-import gettext, os
+"""This module contains localization functions and classes."""
+
+import gettext
+import os
 
 l10n_path = os.path.join(os.path.dirname(__file__), 'l10n')
 
@@ -13,11 +16,13 @@ for language in supported_languages:
 
 
 class Translatable:
+    """This is a class for storing a string that must be translated."""
 
     def __init__(self, text):
         self.text = text
 
     def GetTranslation(self, locale):
+        """Get string translation due to locale."""
         if locale not in supported_languages:
             locale = 'en'
         l10n_function = translations[locale].gettext
@@ -25,6 +30,7 @@ class Translatable:
 
 
 class NTranslatable:
+    """This class stores a string that must be translated with plural form."""
 
     def __init__(self, single_text, plural_text, number):
         self.single_text = single_text
@@ -32,6 +38,7 @@ class NTranslatable:
         self.number = number
 
     def GetTranslation(self, locale):
+        """Get string translation due to locale."""
         if locale not in supported_languages:
             locale = 'en'
         l10n_function = translations[locale].ngettext
@@ -39,6 +46,7 @@ class NTranslatable:
 
 
 def TranslateWithInsertions(text, insertions, locale):
+    """Translate a string with some insertions and format it."""
     if locale not in supported_languages:
         locale = 'en'
     translated_insertions = []

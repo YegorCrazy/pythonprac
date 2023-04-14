@@ -13,6 +13,7 @@ from .attack import PerformAttackCommand, PLAYER_WEAPONS
 
 supported_languages = ['en', 'ru']
 
+
 class MUDShell(cmd.Cmd):
     """Shell class."""
 
@@ -92,7 +93,7 @@ class MUDShell(cmd.Cmd):
         self.network_adapter.SendInfoToServerWithoutResponse(
             'sayall ' + args.strip())
 
-    def do_locale(self, args):  #noqa: D102
+    def do_locale(self, args):  # noqa: D102
         locale = args.strip()
         if locale in supported_languages:
             self.network_adapter.SendInfoToServerWithoutResponse(
@@ -100,7 +101,7 @@ class MUDShell(cmd.Cmd):
         else:
             print('Unknown locale')
 
-    def complete_locale(self, text, line, startidx, endidx):  #noqa: D102
+    def complete_locale(self, text, line, startidx, endidx):  # noqa: D102
         return [locale for locale in supported_languages
                 if locale.startswith(text)]
 
