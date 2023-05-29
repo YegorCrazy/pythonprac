@@ -38,8 +38,12 @@ async def main():
         await server.serve_forever()
 
 
-if __name__ == '__main__':
+def serve():
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
         print('Server is down')
+
+
+if __name__ == '__main__':
+    serve()

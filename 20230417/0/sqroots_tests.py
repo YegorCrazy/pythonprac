@@ -4,6 +4,7 @@ import sqroots_client
 import multiprocessing
 import socket
 import time
+import asyncio
 
 class TestSqroots(unittest.TestCase):
 
@@ -29,7 +30,7 @@ class TestSqrootsServer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.proc = multiprocessing.Process(target=sqroots.main)
+        cls.proc = multiprocessing.Process(target=sqroots.serve)
         cls.proc.start()
         time.sleep(1)
         cls.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
