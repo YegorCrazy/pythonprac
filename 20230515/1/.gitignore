@@ -1,0 +1,6 @@
+*/__pycache__/*
+__pycache__/*
+build*
+moodserver/l10n.pot
+*.mo
+.doit.db

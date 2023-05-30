@@ -1,0 +1,12 @@
+Регистрация:
+Запрос - login name
+Ответ: ok/no
+
+Движение:
+Запрос - move mod_x mod_y
+
+Создание монстра:
+Запрос - addmon name greeting x y hp
+
+Атака монстра:
+Запрос - attack name weapon
