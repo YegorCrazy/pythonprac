@@ -1,0 +1,15 @@
+COPYRIGHT
+README.md
+pyproject.toml
+MOODClient.egg-info/PKG-INFO
+MOODClient.egg-info/SOURCES.txt
+MOODClient.egg-info/dependency_links.txt
+MOODClient.egg-info/requires.txt
+MOODClient.egg-info/top_level.txt
+moodclient/__main__.py
+moodclient/addmon.py
+moodclient/attack.py
+moodclient/monster_options.py
+moodclient/move.py
+moodclient/mudshell.py
+moodclient/network_adapter.py

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, Mock
-from moodclient.mudshell import MUDShell
-from moodclient.monster_options import UndefinedParameterException
+from moodclient.moodclient.mudshell import MUDShell
+from moodclient.moodclient.monster_options import UndefinedParameterException
 
 class TestClientMVP(unittest.TestCase):
 

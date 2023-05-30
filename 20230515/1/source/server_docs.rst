@@ -1,30 +1,30 @@
 Moodserver module documentation
 ===============================
 
-.. automodule:: moodserver.dungeon
+.. automodule:: moodserver.moodserver.dungeon
    :members:
    :private-members:
    
-.. automodule:: moodserver.monster
+.. automodule:: moodserver.moodserver.monster
    :members:
    :private-members:
    
-.. automodule:: moodserver.player
+.. automodule:: moodserver.moodserver.player
    :members:
    :private-members:
    
-.. automodule:: moodserver.response
+.. automodule:: moodserver.moodserver.response
    :members:
    :private-members:
    
-.. automodule:: moodserver.server
+.. automodule:: moodserver.moodserver.server
    :members:
    :private-members:
    
-.. automodule:: moodserver.l10n
+.. automodule:: moodserver.moodserver.l10n
    :members:
    :private-members:
    
-.. automodule:: moodserver.utils
+.. automodule:: moodserver.moodserver.utils
    :members:
    :private-members:

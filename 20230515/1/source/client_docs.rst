@@ -1,26 +1,26 @@
 Moodclient module documentation
 ===============================
 
-.. automodule:: moodclient.mudshell
+.. automodule:: moodclient.moodclient.mudshell
    :members:
    :private-members:
    
-.. automodule:: moodclient.move
+.. automodule:: moodclient.moodclient.move
    :members:
    :private-members:
    
-.. automodule:: moodclient.addmon
+.. automodule:: moodclient.moodclient.addmon
    :members:
    :private-members:
    
-.. automodule:: moodclient.monster_options
+.. automodule:: moodclient.moodclient.monster_options
    :members:
    :private-members:
    
-.. automodule:: moodclient.attack
+.. automodule:: moodclient.moodclient.attack
    :members:
    :private-members:
    
-.. automodule:: moodclient.network_adapter
+.. automodule:: moodclient.moodclient.network_adapter
    :members:
    :private-members:

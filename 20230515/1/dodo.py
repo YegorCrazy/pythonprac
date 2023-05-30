@@ -3,7 +3,7 @@ DOIT_CONFIG = {"default_tasks": ["html"]}
 def task_extract():
     return {
         'actions': [
-            'pybabel extract -o ./moodserver/l10n.pot ./moodserver/text_to_translate.py',
+            'pybabel extract -o ./moodserver/moodserver/l10n.pot ./moodserver/moodserver/text_to_translate.py',
             ],
         'targets': [
             'l10n.pot',
@@ -14,7 +14,7 @@ def task_extract():
 def task_update():
     return {
         'actions': [
-            'pybabel update -D l10n -d ./moodserver/l10n -l ru -i ./moodserver/l10n.pot',
+            'pybabel update -D l10n -d ./moodserver/moodserver/l10n -l ru -i ./moodserver/moodserver/l10n.pot',
             ],
         'task_dep': [
             'extract',
@@ -25,7 +25,7 @@ def task_update():
 def task_compile():
     return {
         'actions': [
-            'pybabel update -D l10n -d ./moodserver/l10n -l ru -i ./moodserver/l10n.pot',
+            'pybabel update -D l10n -d ./moodserver/moodserver/l10n -l ru -i ./moodserver/moodserver/l10n.pot',
             ],
         'task_dep': [
             'update',
@@ -61,4 +61,23 @@ def task_html():
         'actions': [
             'make html',
             ],
+        }
+
+
+def task_wheel_server():
+    return {
+        'actions': ['python3 -m build -n -w moodserver'],
+        }
+
+
+def task_wheel_client():
+    return {
+        'actions': ['python3 -m build -n -w moodclient'],
+        }
+
+
+def task_wheels():
+    return {
+        'actions': [],
+        'task_dep': ['wheel_server', 'wheel_client'],
         }

@@ -1,0 +1,33 @@
+[project]
+name = "MOODServer"
+version = "0.1"
+description = "Server for MOOD"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "COPYRIGHT"}
+authors = [
+ {name = "Britenkov Yegor", email = "s02200338@gmail.com"}
+]
+
+keywords = ["python-cowsay", "project", "example"]
+classifiers = [
+      "Development Status :: 4 - Beta",
+      "Programming Language :: Python :: 3",
+      "License :: OSI Approved :: MIT License",
+      "Operating System :: OS Independent",
+]
+
+dependencies = ["python-cowsay"]
+
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["Sphinx", "build", "doit", "flake8", "pydocstyle", "setuptools"]
+
+[tools.setuptools]
+Packages = ["moodserver"]
+
+[tool.setuptools.package-dir]
+moodserver = "moodserver"
+
+[tool.setuptools.package-data]
+moodserver = ["l10n/ru/*/*.mo", "custom_cows/*"]
