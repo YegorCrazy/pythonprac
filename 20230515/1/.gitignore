@@ -2,7 +2,7 @@
 __pycache__/*
 build*
 moodserver/moodserver/l10n.pot
-*/*egg*
+*/*.egg-info/*
 *.mo
 */dist/*
 .doit.db
