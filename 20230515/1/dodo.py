@@ -25,7 +25,7 @@ def task_update():
 def task_compile():
     return {
         'actions': [
-            'pybabel update -D l10n -d ./moodserver/moodserver/l10n -l ru -i ./moodserver/moodserver/l10n.pot',
+            'pybabel compile -D l10n -d ./moodserver/moodserver/l10n -l ru',
             ],
         'task_dep': [
             'update',
